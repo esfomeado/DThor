@@ -22,14 +22,24 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 import pt.ipb.dthor.servlets.TorrentUpload;
 
+
 public class JettyServer {
 
     private final String WEBROOT = "/pt/ipb/dthor/webroot/";
     private final int port = 8080;
-    private Server server;
+    private  Server server = null;
+    private static JettyServer instance = null;
+    
+    public static JettyServer getInstance() throws IOException, URISyntaxException, Exception{
+        
+        if(instance == null) {
+            instance = new JettyServer();
+        }
+        return instance;
+    } 
 
-    public void start() throws FileNotFoundException, URISyntaxException, IOException, Exception {
-
+    private JettyServer() throws FileNotFoundException, URISyntaxException, IOException, Exception {
+        
         server = new Server();
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(port);
@@ -97,7 +107,7 @@ public class JettyServer {
         holderDefault.setInitParameter("dirAllowed", "true");
         context.addServlet(holderDefault, "/");
 
-        server.start();
+        server.start(); 
     }
 
     public void stop() throws Exception {
