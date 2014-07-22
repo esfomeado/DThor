@@ -38,6 +38,7 @@ public class DThorTomP2P implements IDThor {
         PeerAddress peerAddress = new PeerAddress(Number160.ZERO, InetAddress.getByName(MASTER_IP), MASTER_PORT, MASTER_PORT);
 
         FutureDiscover fd = peer.discover().peerAddress(peerAddress).start();
+        fd.awaitUninterruptibly();
 
         if (fd.isSuccess()) {
             System.out.println("Outside Address: " + fd.peerAddress());
@@ -55,7 +56,7 @@ public class DThorTomP2P implements IDThor {
 
         if (bootstrap.isFailed()) {
             throw new Exception("Failed to bootstrap to host " + bootstrap.failedReason());
-        }        
+        }
     }
 
     @Override
