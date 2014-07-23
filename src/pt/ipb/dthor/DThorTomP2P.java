@@ -19,7 +19,7 @@ import pt.ipb.dthor.torrent.DThorTorrent;
 public class DThorTomP2P implements IDThor {
 
     private static DThorTomP2P instance = null;
-    private final String MASTER_IP = "193.137.109.120";
+    private final String MASTER_IP = "127.0.0.1";
     private final int MASTER_PORT = 4000;
     private Peer peer = null;
 
@@ -33,11 +33,11 @@ public class DThorTomP2P implements IDThor {
     private DThorTomP2P() throws IOException, Exception {
         Random r = new Random(43L);
         int listenPort = MASTER_PORT + 1 + (int) Math.floor(Math.random() * 1000);
-        peer = new PeerBuilder(new Number160(r)).ports(listenPort).behindFirewall().start();
-        PeerNAT peerNAT = new PeerBuilderNAT(peer).start();
+        peer = new PeerBuilderDHT(new PeerBuilder(new Number160(r)).ports(listenPort).behindFirewall().start()).start();
+        PeerNAT peerNAT = new PeerBuilderNAT(peer.peer()).start();
         PeerAddress peerAddress = new PeerAddress(Number160.ZERO, InetAddress.getByName(MASTER_IP), MASTER_PORT, MASTER_PORT);
 
-        FutureDiscover fd = peer.discover().peerAddress(peerAddress).start();
+        FutureDiscover fd = peer.peer().discover().peerAddress(peerAddress).start();
         fd.awaitUninterruptibly();
 
         if (fd.isSuccess()) {
