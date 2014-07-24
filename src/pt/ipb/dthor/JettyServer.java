@@ -20,8 +20,8 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
+import pt.ipb.dthor.servlets.TorrentSearch;
 import pt.ipb.dthor.servlets.TorrentUpload;
-
 
 public class JettyServer {
 
@@ -77,6 +77,7 @@ public class JettyServer {
 
         //Adiciona os servlets
         context.addServlet(TorrentUpload.class, "/upload");
+        context.addServlet(TorrentSearch.class, "/search");
         
         //Garante que o JSP é inicializado sem problemas
         JettyJasperInitializer sci = new JettyJasperInitializer();
@@ -110,6 +111,7 @@ public class JettyServer {
         server.start(); 
     }
 
+  
     public void stop() throws Exception {
         server.stop();
     }
