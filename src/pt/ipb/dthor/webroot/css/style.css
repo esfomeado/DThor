@@ -1,0 +1,392 @@
+div, article, section, header, footer, nav, li {
+    position: relative;
+}
+
+body {
+    background: #f0f0f0;
+    color: #312A1E;
+    font-size: 100%;
+    font-family: 'Quattrocento', serif;
+    padding-top: 60px;
+}
+
+::-moz-selection {
+    background: #69F;
+    color: #333;
+}
+
+input[type=text], input[type=submit], textarea {
+    width: 100%;
+    padding: 0.5em;
+    font-size: 1em;
+    margin-bottom: 1.5em;
+    box-sizing: border-box;
+}
+
+input, button, select, textarea {
+    font-family: 'Quattrocento', serif;
+}
+
+p {
+    font-size: 1em;
+    line-height: 1.5;
+    margin: 0 0 1.5em 0;
+}
+
+ul, ol {
+    font-size: 1em;
+    line-height: 1.5;
+    margin: 0 0 1.5em 0;
+}
+
+a:link, a:visited {
+    color: #F1505A;
+}
+
+a:hover, a:active {
+    color: #F1505A;
+    text-decoration: underline;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+    font-family: 'Patua One', cursive;
+}
+
+h1 {
+    font-size: 1.5em;
+    line-height: 1;
+    margin-top: 1.42em;
+    margin-bottom: 0em;
+}
+
+h2 {
+    font-size: 1.3125em;
+    line-height: 1.1429;
+    margin-top: 1.1429em;
+    margin-bottom: 0em;
+}
+
+h3 {
+    font-size: 1.125em;
+    line-height: 1.3333;
+    margin-top: 1.3333em;
+    margin-bottom: 0em;
+}
+
+h4 {
+    font-size: 1em;
+    line-height: 1.5;
+    margin-top: 1.5em;
+    margin-bottom: 0em;
+}
+
+h5 {
+    font-size: 0.875em;
+    line-height: 1.7143;
+    margin-top: 1.7143em;
+    margin-bottom: 0em;
+}
+
+strong {
+    font-weight: normal;
+    font-family: 'Open Sans', sans-serif;
+}
+
+small {
+    font-size: 0.75em;
+    line-height: 2;
+    margin-top: 2em;
+    margin-bottom: 0em;
+}
+
+em {
+    font-style: normal;
+    font-family: 'Open Sans';
+}
+
+.navbar .brand {
+    margin-left: 0;
+    padding: 0;
+    margin-top: 1.05em;
+}
+
+.navbar .brand a {
+    padding: 0;
+    color: #fff;
+    font-size: 1.75em;
+    margin-left: 0;
+    font-weight: normal;
+    font-family: 'Patua One', cursive;
+}
+
+.navbar .brand a:hover {
+    text-decoration: none;
+    color: #69F;
+    transition: color .15s linear;
+}
+
+.navbar .brand a:focus {
+    outline: none;
+}
+
+.navbar-inner {
+    min-height: 4.75em;
+}
+
+.navbar-inverse .navbar-inner {
+    background-repeat: repeat;
+    background-color: #0b333f;
+    border-color: #69F;
+	background-image: none;
+}
+
+.navbar-wrapper {
+    overflow: hidden;
+}
+
+#menu-main {
+    margin-top: 1.125em;
+}
+
+ul#menu-main > li > a {
+    font-family: 'Patua One', cursive;
+    font-weight: normal;
+    font-size: 1em;
+    color: #fff;
+}
+
+ul#menu-main > li > a:hover {
+    background: #69F;
+    padding: 9px 15px;
+    border-radius: 3px;
+}
+
+.navbar-inverse .brand, .navbar-inverse .nav > li > a {
+    text-shadow: none;
+}
+
+#headerwrap {
+    width: 100%;
+    background: url(../img/top-bg.jpg) #0b333f no-repeat center center fixed;
+    background-size: cover;
+    min-height: 600px;
+    margin-top: -60px;
+    padding-top: 160px;
+    text-align: center;
+}
+
+#headerwrap h1 {
+    color: #FFFFFF;
+    font-family: 'Patua One', cursive;
+    font-size: 4em;
+    font-weight: 400;
+    margin: 1em 0;
+}
+
+#headerwrap h2 {
+    color: #FFFFFF;
+    font-family: 'Open Sans', sans serif;
+    font-size: 2em;
+    font-weight: normal;
+    margin: 0.5em 0;
+    text-shadow: 1px 1px 1px #333333;
+}
+
+#headerwrap h1 span {
+    color: #69F;
+}
+
+#headerwrap input[type=text] {
+    background: rgba(227, 231, 228, 1);
+    font-family: 'Open Sans', sans serif;
+    font-size: 1.3125em;
+    border: 0;
+    text-align: center;
+    vertical-align: middle;
+    margin-bottom: 0 !important;
+}
+
+#headerwrap input[type=text]:focus {
+    background-color: #43413e;
+    color: #eff1ef;
+    transition: background 0.25 ease-in;
+}
+
+#headerwrap input[type=text] {
+    min-height: 2.9em;
+    width: 50%;
+}
+
+input[type=submit] {
+    font-family: 'Patua One', cursive;
+    color: #fff;
+    width: 185px;
+    height: 2.9em;
+    font-size: 1.3125em;
+    padding: 0.5em;
+    letter-spacing: 0.05em;
+    margin: 0;
+    border: 0;
+    text-transform: none;
+    background: #69F !important;
+    border-radius: 3px;
+}
+
+input[type=submit]:hover, input[type=submit]:active {
+    background: #43413e !important;
+}
+
+section.single-page {
+    padding: 9em 0;
+	padding-bottom: 0;
+}
+
+section.single-page h1 {
+    text-align: center;
+    font-family: 'Patua One', cursive;
+    margin-bottom: 2em;
+    font-size: 2.25em;
+}
+
+section#uploadbox h1 {
+    font-size: 3em;
+    margin-bottom: 1em;
+    margin-top: 0.5em;
+}
+
+section#uploadbox hgroup h2 {
+    margin-top: 1em;
+    text-transform: capitalize;
+}
+
+section#uploadbox hgroup h3 {
+    margin-top: .35em;
+    font-family: 'Patua One', cursive;
+}
+
+section#uploadbox .align {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 6em;
+}
+
+.btn {
+    font-family: 'Patua One', cursive;
+    color: #fff;
+    width: 185px;
+    height: 20px;
+    text-shadow: none;
+    font-size: 1.3125em;
+    padding: 1em 0.5em;
+    letter-spacing: 0.05em;
+    margin: 4.5em auto 0;
+    display: block;
+    border: 0;
+    text-transform: none;
+    background: #69F !important;
+    border-radius: 3px;
+    box-shadow: none;
+}
+
+.btn:link, .btn:visited {
+    color: #fff;
+}
+
+.btn:hover {
+    background: #312A1E !important;
+}
+
+.navbar-inverse .btn-navbar {
+    width: auto;
+    height: auto;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+    margin-top: 70px;
+    margin-left: 194px;
+    margin-bottom: -60px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	height: 18px;
+}
+
+#uploadbox input[type=submit] {
+	height: 60px;
+}
+
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+	opacity: 0;
+    cursor: inherit;
+    display: block;
+}
+
+input[readonly] {
+    margin-left: 400px;
+    margin-bottom: 150px;
+	margin-right: 5px;
+    float: left;
+    background-color: white !important;
+    cursor: text !important;
+    width: 40%;
+    height: 60px;
+	border-bottom-left-radius: 0;
+	border-top-left-radius: 0;
+}
+
+#download_list {
+    background: none repeat scroll 0% 0% rgba(255, 255, 255, 0.9);
+	margin-bottom: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 900px;
+    border-radius: 6px;
+}
+
+.torrent_name{
+    text-decoration: none;
+    border: 1px solid rgba(179, 169, 169, 0.27);
+    border-radius: 4px;
+    display: block;
+    min-height: 50px;
+    margin-top: 0px;
+    margin-left: 4.5%;
+    margin-bottom: 20px;
+    font-size: 16px;
+    padding: 10px;
+    width: 800px;
+    line-height: 50px;
+    vertical-align: middle;
+}
+
+.torrent_link:link{
+    color:#6699FF;
+    font-weight: bolder;
+}
+
+.torrent_link:hover{
+    text-decoration: none;    
+}
+
+label.torrent_name{
+    display: block;
+    min-height: 50px;
+    background:  none repeat scroll 0% 0% rgba(235, 229, 229, 0.32);
+    border-radius: 4px;
+    padding: 10px;
+    text-align: center;
+	font-weight: bold;
+}
+
+label.torrent_name:hover{
+    background: none repeat scroll 0% 0% rgba(223, 220, 220, 0.41);
+    border-color: #CAC9C9;
+}

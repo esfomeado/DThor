@@ -10,13 +10,10 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.jasper.servlet.JspServlet;
-import org.apache.tomcat.InstanceManager;
-import org.apache.tomcat.SimpleInstanceManager;
 import org.eclipse.jetty.annotations.ServletContainerInitializersStarter;
 import org.eclipse.jetty.apache.jsp.JettyJasperInitializer;
 import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -25,61 +22,50 @@ import pt.ipb.dthor.servlets.TorrentUpload;
 
 public class JettyServer {
 
-    private final String WEBROOT = "/pt/ipb/dthor/webroot/";
-    private final int port = 8080;
-    private  Server server = null;
+    private final int SERVER_PORT = DThorConfig.JETTY_PORT;
+    private final String WEB_ROOT = "./webroot/";
     private static JettyServer instance = null;
-    
-    public static JettyServer getInstance() throws IOException, URISyntaxException, Exception{
-        
-        if(instance == null) {
+    private final Server server;
+
+    public static JettyServer getInstance() throws FileNotFoundException, URISyntaxException, Exception {
+        if (instance == null) {
             instance = new JettyServer();
         }
         return instance;
-    } 
+    }
 
-    private JettyServer() throws FileNotFoundException, URISyntaxException, IOException, Exception {
-        
-        server = new Server();
-        ServerConnector connector = new ServerConnector(server);
-        connector.setPort(port);
-        server.addConnector(connector);
+    private JettyServer() throws FileNotFoundException, URISyntaxException, Exception {
+        server = new Server(SERVER_PORT);
 
-        URL indexURL = this.getClass().getResource(WEBROOT);
+        URL webRootURL = this.getClass().getResource(WEB_ROOT);
 
-        if (indexURL == null) {
-            throw new FileNotFoundException("Unable to find " + WEBROOT);
+        if (webRootURL == null) {
+            throw new FileNotFoundException("Unable to find " + WEB_ROOT);
         }
+        
+        URI webRootURI = webRootURL.toURI();
 
-        URI indexURI = indexURL.toURI();
-
-        //Pasta temporaria
         File tempDir = new File(System.getProperty("java.io.tmpdir"));
         File writeDir = new File(tempDir.toString(), "dthor");
 
-        //Verifica se a pasta existe
         if (!writeDir.exists()) {
-            //Tenta criar a pasta
             if (!writeDir.mkdirs()) {
                 throw new IOException("Unable to create directory: " + writeDir);
             }
         }
 
-        //Obriga os ficheiros a ser compilados com o JAVAC
         System.setProperty("org.apache.jasper.compiler.disablejsr199", "false");
 
         WebAppContext context = new WebAppContext();
         context.setContextPath("/");
         context.setAttribute("javax.servlet.context.tempdir", writeDir);
-        context.setResourceBase(indexURI.toASCIIString());
-        context.setAttribute(InstanceManager.class.getName(), new SimpleInstanceManager());
-        server.setHandler(context);
-
-        //Adiciona os servlets
+        context.setResourceBase(webRootURI.toASCIIString());
+        
         context.addServlet(TorrentUpload.class, "/upload");
         context.addServlet(TorrentSearch.class, "/search");
-        
-        //Garante que o JSP é inicializado sem problemas
+
+        server.setHandler(context);
+
         JettyJasperInitializer sci = new JettyJasperInitializer();
         ServletContainerInitializersStarter sciStarter = new ServletContainerInitializersStarter(context);
         ContainerInitializer initializer = new ContainerInitializer(sci, null);
@@ -92,7 +78,6 @@ public class JettyServer {
         ClassLoader jspClassLoader = new URLClassLoader(new URL[0], this.getClass().getClassLoader());
         context.setClassLoader(jspClassLoader);
 
-        //JSP Servlet
         ServletHolder jspServlet = new ServletHolder("jsp", JspServlet.class);
         jspServlet.setInitOrder(0);
         jspServlet.setInitParameter("logVerbosityLevel", "WARNING");
@@ -104,19 +89,18 @@ public class JettyServer {
         context.addServlet(jspServlet, "*.jsp");
 
         ServletHolder holderDefault = new ServletHolder("default", DefaultServlet.class);
-        holderDefault.setInitParameter("resourceBase", indexURI.toASCIIString());
+        holderDefault.setInitParameter("resourceBase", webRootURI.toASCIIString());
         holderDefault.setInitParameter("dirAllowed", "true");
         context.addServlet(holderDefault, "/");
-
-        server.start(); 
-    }
-
-  
-    public void stop() throws Exception {
-        server.stop();
+        
+        server.start();
     }
 
     public void waitForInterrupt() throws InterruptedException {
         server.join();
+    }
+
+    public void stop() throws Exception {
+        server.stop();
     }
 }

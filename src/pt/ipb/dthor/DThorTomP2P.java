@@ -3,7 +3,7 @@ package pt.ipb.dthor;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.NavigableMap;
 import java.util.Random;
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.FuturePut;
@@ -11,22 +11,21 @@ import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.futures.FutureBootstrap;
 import net.tomp2p.futures.FutureDiscover;
-import net.tomp2p.nat.FutureNAT;
-import net.tomp2p.nat.FutureRelayNAT;
-import net.tomp2p.nat.PeerBuilderNAT;
-import net.tomp2p.nat.PeerNAT;
 import net.tomp2p.p2p.PeerBuilder;
 import net.tomp2p.peers.Number160;
+import net.tomp2p.peers.Number640;
 import net.tomp2p.peers.PeerAddress;
+import net.tomp2p.rpc.ObjectDataReply;
 import net.tomp2p.storage.Data;
 import pt.ipb.dthor.torrent.DThorTorrent;
 
 public class DThorTomP2P implements IDThor {
 
+    private final boolean IS_SUPER_PEER = DThorConfig.SUPER_PEER;
+    private final String SUPER_PEER_IP = DThorConfig.SUPER_PEER_IP;
+    private final int SUPER_PEER_PORT = DThorConfig.SUPER_PEER_PORT;
     private static DThorTomP2P instance = null;
-    private final String MASTER_IP = "127.0.0.1";
-    private final int MASTER_PORT = 4000;
-    private PeerDHT peer = null;
+    private final PeerDHT peer;
 
     public static DThorTomP2P getInstance() throws IOException, Exception {
         if (instance == null) {
@@ -36,71 +35,72 @@ public class DThorTomP2P implements IDThor {
     }
 
     private DThorTomP2P() throws IOException, Exception {
-        Random r = new Random(43L);
-        int listenPort = MASTER_PORT + 1 + (int) Math.floor(Math.random() * 1000);
-        peer = new PeerBuilderDHT(new PeerBuilder(new Number160(r)).ports(listenPort).behindFirewall().start()).start();
-        PeerNAT peerNAT = new PeerBuilderNAT(peer.peer()).start();
-        PeerAddress peerAddress = new PeerAddress(Number160.ZERO, InetAddress.getByName(MASTER_IP), MASTER_PORT, MASTER_PORT);
-
-        FutureDiscover fd = peer.peer().discover().peerAddress(peerAddress).start();
-        fd.awaitUninterruptibly();
-
-        if (fd.isSuccess()) {
-            System.out.println("Outside Address: " + fd.peerAddress());
+        Random r = new Random();
+        if (IS_SUPER_PEER) {
+            peer = new PeerBuilderDHT(new PeerBuilder(new Number160(r)).ports(SUPER_PEER_PORT).start()).start();
         } else {
-            System.out.println("Failed discover: " + fd.failedReason());
+            int listenPort = SUPER_PEER_PORT + 1 + (int) Math.floor(Math.random() * 1000);
+            peer = new PeerBuilderDHT(new PeerBuilder(new Number160(r)).ports(listenPort).start()).start();
+            PeerAddress peerAddress = new PeerAddress(Number160.ZERO, InetAddress.getByName(SUPER_PEER_IP), SUPER_PEER_PORT, SUPER_PEER_PORT);
+
+            FutureDiscover discovery = peer.peer().discover().peerAddress(peerAddress).start();
+            discovery.awaitUninterruptibly();
+
+            if (discovery.isFailed()) {
+                //Executar NAT
+            }
+
+            peerAddress = discovery.peerAddress();
+
+            FutureBootstrap bootstrap = peer.peer().bootstrap().peerAddress(peerAddress).start();
+            bootstrap.awaitUninterruptibly();
+
+            if (bootstrap.isFailed()) {
+                throw new Exception("Failed to bootstrap to host " + bootstrap.failedReason());
+            }
         }
 
-        FutureNAT fn = peerNAT.startSetupPortforwarding(fd);
-        FutureRelayNAT frn = peerNAT.startRelay(fd, fn);
-        frn.awaitUninterruptibly();
-
-        peerAddress = fd.reporter();
-        FutureBootstrap bootstrap = peer.peer().bootstrap().peerAddress(peerAddress).start();
-        bootstrap.awaitUninterruptibly();
-
-        if (bootstrap.isFailed()) {
-            throw new Exception("Failed to bootstrap to host " + bootstrap.failedReason());
-        }
+        System.out.println("Peer Connected!");
     }
 
     @Override
     public void addTorrent(DThorTorrent torrent) throws IOException {
-        Data d = new Data(torrent);
-        Number160 key = Number160.createHash(torrent.getSaveAs());
+        Data torrentData = new Data(torrent);
+        Number160 key = torrentData.hash();
 
         FuturePut fp = peer.put(key).object(torrent).start();
-        fp.awaitUninterruptibly();
-
-        System.out.println(torrent.getSaveAs());
-        String[] keywords = torrent.getSaveAs().split(" ");
-
-        for (String keyword : keywords) {
-            System.out.println("Keyword: " + keyword);
-            Number160 keyKeyWord = Number160.createHash(keyword);
-            peer.add(keyKeyWord).object(key).start().awaitUninterruptibly();
-        }
+        fp.awaitUninterruptibly();        
     }
 
     @Override
-    public ArrayList<DThorTorrent> searchTorrent(String name) throws ClassNotFoundException, IOException {
-        Number160 keyKeyWord = Number160.createHash(name);
-        FutureGet fg = peer.get(keyKeyWord).all().start();
+    public DThorTorrent searchTorrent(Number160 key) throws ClassNotFoundException, IOException {
+        FutureGet fg = peer.get(key).start();
         fg.awaitUninterruptibly();
-        System.out.println("Size Chaves: " + fg.dataMap().size());
-        Iterator<Data> objectos = fg.dataMap().values().iterator();
-
-        Number160 termKey;
-        ArrayList<DThorTorrent> torrents = new ArrayList<>();
-
-        while (objectos.hasNext()) {
-            termKey = (Number160) objectos.next().object();
-            fg = peer.get(termKey).start();
-            fg.awaitUninterruptibly();
-            
-            torrents.add((DThorTorrent)fg.data().object());
-        }
-
-        return torrents;
+        
+        Data torrentData = fg.data();
+        DThorTorrent torrent = (DThorTorrent)torrentData.object();
+        
+        return torrent;
     }
+    
+    public ArrayList<Number160> getKeys() {
+        ArrayList<Number160> keys = new ArrayList<>();
+        
+        NavigableMap<Number640, Data> keysMap = peer.storageLayer().get();
+        
+        for(Number640 key: keysMap.keySet()) {
+            keys.add(key.locationKey());
+        }
+        
+        return keys;
+    }
+    
+    public void sendKeys(final ArrayList<Number160> keys) {
+        peer.peer().objectDataReply(new ObjectDataReply() {
+            @Override
+            public Object reply(PeerAddress sender, Object request) throws Exception {
+               return keys; 
+            }
+        });
+    }    
 }

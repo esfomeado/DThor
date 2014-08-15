@@ -1,18 +1,21 @@
 package pt.ipb.dthor;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
 
 public class Main {
-            
-    private static JettyServer server;
-	private static DThorTomP2P dht;
-
-    public static void main(String[] args) throws IOException, URISyntaxException, Exception {
+    
+    public static void main(String[] args) throws URISyntaxException, Exception {
+        DThorConfig config = new DThorConfig();
+        config.load();
         
-		dht = DThorTomP2P.getInstance();
-		
-        server = JettyServer.getInstance();
+        DThorTomP2P dht = DThorTomP2P.getInstance();
+        
+        DThorReplyKeys reply = new DThorReplyKeys();
+        Thread replyThread = new Thread(reply);
+        replyThread.start();
+
+        JettyServer server = JettyServer.getInstance();
         server.waitForInterrupt();
     }
+    
 }

@@ -1,25 +1,30 @@
 package pt.ipb.dthor.torrent;
 
+import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
 
-public class DThorTorrent {
+public class DThorTorrent implements Serializable {
 
     private String announce;
+    private List<List<URI>> announceList;
     private String comment;
     private String createdBy;
-    private long creationDate;
+    private Long creationDate;
     private String encoding;
-    private byte[] info_hash_as_binary;
-    private String info_hash_as_hex;
-    private String info_hash_as_url;
-    private ArrayList<String> length;
-    private ArrayList<String> name;
-    private ArrayList<String> piece_hash_values_as_binary;
-    private ArrayList<String> piece_hash_values_as_hex;
-    private ArrayList<String> piece_hash_values_as_url;
-    private int pieceLength;
     private String saveAs;
-    private long totalLength;
+    private int pieceLength;
+    private List<String> files;
+    private List<Long> filesLength;
+    private byte[] infoHash;
+    private Long totalLength;
+    private byte[] pieceHash;
+
+    public DThorTorrent() {
+        announceList = new ArrayList<>();
+        files = new ArrayList<>();
+    }
 
     public String getAnnounce() {
         return announce;
@@ -27,6 +32,14 @@ public class DThorTorrent {
 
     public void setAnnounce(String announce) {
         this.announce = announce;
+    }
+
+    public List<List<URI>> getAnnounceList() {
+        return announceList;
+    }
+
+    public void setAnnounceList(List<List<URI>> announceList) {
+        this.announceList = announceList;
     }
 
     public String getComment() {
@@ -45,11 +58,11 @@ public class DThorTorrent {
         this.createdBy = createdBy;
     }
 
-    public long getCreationDate() {
+    public Long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(long creationDate) {
+    public void setCreationDate(Long creationDate) {
         this.creationDate = creationDate;
     }
 
@@ -61,68 +74,12 @@ public class DThorTorrent {
         this.encoding = encoding;
     }
 
-    public byte[] getInfo_hash_as_binary() {
-        return info_hash_as_binary;
+    public String getSaveAs() {
+        return saveAs;
     }
 
-    public void setInfo_hash_as_binary(byte[] info_hash_as_binary) {
-        this.info_hash_as_binary = info_hash_as_binary;
-    }
-
-    public String getInfo_hash_as_hex() {
-        return info_hash_as_hex;
-    }
-
-    public void setInfo_hash_as_hex(String info_hash_as_hex) {
-        this.info_hash_as_hex = info_hash_as_hex;
-    }
-
-    public String getInfo_hash_as_url() {
-        return info_hash_as_url;
-    }
-
-    public void setInfo_hash_as_url(String info_hash_as_url) {
-        this.info_hash_as_url = info_hash_as_url;
-    }
-
-    public ArrayList<String> getLength() {
-        return length;
-    }
-
-    public void setLength(ArrayList<String> length) {
-        this.length = length;
-    }
-
-    public ArrayList<String> getName() {
-        return name;
-    }
-
-    public void setName(ArrayList<String> name) {
-        this.name = name;
-    }
-
-    public ArrayList<String> getPiece_hash_values_as_binary() {
-        return piece_hash_values_as_binary;
-    }
-
-    public void setPiece_hash_values_as_binary(ArrayList<String> piece_hash_values_as_binary) {
-        this.piece_hash_values_as_binary = piece_hash_values_as_binary;
-    }
-
-    public ArrayList<String> getPiece_hash_values_as_hex() {
-        return piece_hash_values_as_hex;
-    }
-
-    public void setPiece_hash_values_as_hex(ArrayList<String> piece_hash_values_as_hex) {
-        this.piece_hash_values_as_hex = piece_hash_values_as_hex;
-    }
-
-    public ArrayList<String> getPiece_hash_values_as_url() {
-        return piece_hash_values_as_url;
-    }
-
-    public void setPiece_hash_values_as_url(ArrayList<String> piece_hash_values_as_url) {
-        this.piece_hash_values_as_url = piece_hash_values_as_url;
+    public void setSaveAs(String saveAs) {
+        this.saveAs = saveAs;
     }
 
     public int getPieceLength() {
@@ -133,19 +90,43 @@ public class DThorTorrent {
         this.pieceLength = pieceLength;
     }
 
-    public String getSaveAs() {
-        return saveAs;
+    public List<String> getFiles() {
+        return files;
     }
 
-    public void setSaveAs(String saveAs) {
-        this.saveAs = saveAs;
+    public void setFiles(List<String> files) {
+        this.files = files;
     }
 
-    public long getTotalLength() {
+    public List<Long> getFilesLength() {
+        return filesLength;
+    }
+
+    public void setFilesLength(List<Long> filesLength) {
+        this.filesLength = filesLength;
+    }
+
+    public byte[] getInfoHash() {
+        return infoHash;
+    }
+
+    public void setInfoHash(byte[] infoHash) {
+        this.infoHash = infoHash;
+    }
+
+    public Long getTotalLength() {
         return totalLength;
     }
 
-    public void setTotalLength(long totalLength) {
+    public void setTotalLength(Long totalLength) {
         this.totalLength = totalLength;
+    }
+
+    public byte[] getPieceHash() {
+        return pieceHash;
+    }
+
+    public void setPieceHash(byte[] pieceHash) {
+        this.pieceHash = pieceHash;
     }
 }
