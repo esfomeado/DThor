@@ -70,7 +70,6 @@ public class TorrentSearch extends HttpServlet {
         while((decodedResult = result.readLine()) != null) {
             x = decodedResult;
         }
-        System.out.println(x);
 
         Object obj = JSONValue.parse(x);
         JSONArray array = (JSONArray) obj;

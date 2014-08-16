@@ -21,14 +21,14 @@ import pt.ipb.dthor.torrent.DThorTorrent;
 
 public class DThorTomP2P implements IDThor {
 
-    private final boolean IS_SUPER_PEER = DThorConfig.SUPER_PEER;
+    private final boolean IS_SUPER_PEER = DThorConfig.IS_SUPER_PEER;
     private final String SUPER_PEER_IP = DThorConfig.SUPER_PEER_IP;
     private final int SUPER_PEER_PORT = DThorConfig.SUPER_PEER_PORT;
     private static DThorTomP2P instance = null;
     private final PeerDHT peer;
 
     public static DThorTomP2P getInstance() throws IOException, Exception {
-        if (instance == null) {
+        if(instance == null) {
             instance = new DThorTomP2P();
         }
         return instance;
@@ -36,7 +36,7 @@ public class DThorTomP2P implements IDThor {
 
     private DThorTomP2P() throws IOException, Exception {
         Random r = new Random();
-        if (IS_SUPER_PEER) {
+        if(IS_SUPER_PEER) {
             peer = new PeerBuilderDHT(new PeerBuilder(new Number160(r)).ports(SUPER_PEER_PORT).start()).start();
         } else {
             int listenPort = SUPER_PEER_PORT + 1 + (int) Math.floor(Math.random() * 1000);
@@ -46,7 +46,7 @@ public class DThorTomP2P implements IDThor {
             FutureDiscover discovery = peer.peer().discover().peerAddress(peerAddress).start();
             discovery.awaitUninterruptibly();
 
-            if (discovery.isFailed()) {
+            if(discovery.isFailed()) {
                 //Executar NAT
             }
 
@@ -55,7 +55,7 @@ public class DThorTomP2P implements IDThor {
             FutureBootstrap bootstrap = peer.peer().bootstrap().peerAddress(peerAddress).start();
             bootstrap.awaitUninterruptibly();
 
-            if (bootstrap.isFailed()) {
+            if(bootstrap.isFailed()) {
                 throw new Exception("Failed to bootstrap to host " + bootstrap.failedReason());
             }
         }
@@ -69,38 +69,37 @@ public class DThorTomP2P implements IDThor {
         Number160 key = torrentData.hash();
 
         FuturePut fp = peer.put(key).object(torrent).start();
-        fp.awaitUninterruptibly();        
+        fp.awaitUninterruptibly();
     }
 
     @Override
     public DThorTorrent searchTorrent(Number160 key) throws ClassNotFoundException, IOException {
         FutureGet fg = peer.get(key).start();
         fg.awaitUninterruptibly();
-        
+
         Data torrentData = fg.data();
-        DThorTorrent torrent = (DThorTorrent)torrentData.object();
-        
-        return torrent;
+
+        return (DThorTorrent) torrentData.object();
     }
-    
+
     public ArrayList<Number160> getKeys() {
         ArrayList<Number160> keys = new ArrayList<>();
-        
+
         NavigableMap<Number640, Data> keysMap = peer.storageLayer().get();
-        
-        for(Number640 key: keysMap.keySet()) {
+
+        for(Number640 key : keysMap.keySet()) {
             keys.add(key.locationKey());
         }
-        
+
         return keys;
     }
-    
+
     public void sendKeys(final ArrayList<Number160> keys) {
         peer.peer().objectDataReply(new ObjectDataReply() {
             @Override
             public Object reply(PeerAddress sender, Object request) throws Exception {
-               return keys; 
+                return keys;
             }
         });
-    }    
+    }
 }

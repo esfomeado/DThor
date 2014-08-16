@@ -10,7 +10,7 @@ import java.util.Properties;
 
 public class DThorConfig {
 
-    public static boolean SUPER_PEER;
+    public static boolean IS_SUPER_PEER;
     public static String SUPER_PEER_IP;
     public static int SUPER_PEER_PORT;
     public static int JETTY_PORT;
@@ -24,7 +24,7 @@ public class DThorConfig {
         InputStream input = new FileInputStream(configURL.toURI().getPath());
         config.load(input);
 
-        SUPER_PEER = Boolean.valueOf(config.getProperty("superPeer"));
+        IS_SUPER_PEER = Boolean.valueOf(config.getProperty("superPeer"));
         SUPER_PEER_IP = config.getProperty("superPeerIP");
         SUPER_PEER_PORT = Integer.parseInt(config.getProperty("superPeerPort"));
         JETTY_PORT = Integer.parseInt(config.getProperty("jettyPort"));

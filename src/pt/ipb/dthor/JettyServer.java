@@ -3,8 +3,6 @@ package pt.ipb.dthor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -14,7 +12,6 @@ import org.eclipse.jetty.annotations.ServletContainerInitializersStarter;
 import org.eclipse.jetty.apache.jsp.JettyJasperInitializer;
 import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 import pt.ipb.dthor.servlets.TorrentSearch;
@@ -27,14 +24,14 @@ public class JettyServer {
     private static JettyServer instance = null;
     private final Server server;
 
-    public static JettyServer getInstance() throws FileNotFoundException, URISyntaxException, Exception {
+    public static JettyServer getInstance() throws Exception {
         if (instance == null) {
             instance = new JettyServer();
         }
         return instance;
     }
 
-    private JettyServer() throws FileNotFoundException, URISyntaxException, Exception {
+    private JettyServer() throws Exception {
         server = new Server(SERVER_PORT);
 
         URL webRootURL = this.getClass().getResource(WEB_ROOT);
@@ -43,8 +40,6 @@ public class JettyServer {
             throw new FileNotFoundException("Unable to find " + WEB_ROOT);
         }
         
-        URI webRootURI = webRootURL.toURI();
-
         File tempDir = new File(System.getProperty("java.io.tmpdir"));
         File writeDir = new File(tempDir.toString(), "dthor");
 
@@ -59,7 +54,7 @@ public class JettyServer {
         WebAppContext context = new WebAppContext();
         context.setContextPath("/");
         context.setAttribute("javax.servlet.context.tempdir", writeDir);
-        context.setResourceBase(webRootURI.toASCIIString());
+        context.setResourceBase(webRootURL.toURI().toASCIIString());
         
         context.addServlet(TorrentUpload.class, "/upload");
         context.addServlet(TorrentSearch.class, "/search");
@@ -87,11 +82,6 @@ public class JettyServer {
         jspServlet.setInitParameter("compilerSourceVM", "1.7");
         jspServlet.setInitParameter("keepgenerated", "true");
         context.addServlet(jspServlet, "*.jsp");
-
-        ServletHolder holderDefault = new ServletHolder("default", DefaultServlet.class);
-        holderDefault.setInitParameter("resourceBase", webRootURI.toASCIIString());
-        holderDefault.setInitParameter("dirAllowed", "true");
-        context.addServlet(holderDefault, "/");
         
         server.start();
     }
