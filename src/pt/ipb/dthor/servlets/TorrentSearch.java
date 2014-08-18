@@ -58,7 +58,7 @@ public class TorrentSearch extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String query = request.getParameter("query");
 
-        URL searchEngineURL = new URL("http://" + DThorConfig.SEARCH_IP + ":" + DThorConfig.SEARCH_PORT + "/search?query=" + query);
+        URL searchEngineURL = new URL("http://" + DThorConfig.SEARCH_IP + ":" + DThorConfig.SEARCH_PORT + "/remotesearch?query=" + query);
 
         HttpURLConnection connection = (HttpURLConnection) searchEngineURL.openConnection();
         connection.setDoOutput(true);

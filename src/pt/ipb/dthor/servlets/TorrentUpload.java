@@ -25,23 +25,23 @@ public class TorrentUpload extends HttpServlet {
         File tempDir = new File(System.getProperty("java.io.tmpdir"));
         File writeDir = new File(tempDir.toString(), "dthor");
 
-        if (ServletFileUpload.isMultipartContent(request)) {
+        if(ServletFileUpload.isMultipartContent(request)) {
             try {
                 List<FileItem> multiparts = new ServletFileUpload(
                         new DiskFileItemFactory()).parseRequest(request);
 
                 String name = null;
 
-                for (FileItem item : multiparts) {
-                    if (!item.isFormField()) {
+                for(FileItem item : multiparts) {
+                    if(!item.isFormField()) {
                         name = new File(item.getName()).getName();
                         item.write(new File(writeDir.toString() + File.separator + name));
                     }
                 }
-                
+
                 Path path = Paths.get(writeDir.toString() + File.separator + name);
                 DThorTorrent torrent = TorrentParser.parseTorrent(Files.readAllBytes(path));
-                
+
                 DThorTomP2P dht = DThorTomP2P.getInstance();
                 dht.addTorrent(torrent);
 
