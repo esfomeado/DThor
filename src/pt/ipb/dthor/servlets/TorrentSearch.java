@@ -28,29 +28,23 @@ public class TorrentSearch extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String key = request.getParameter("key");
 
-        if(key != null) {
+        try {
+            DThorTomP2P dht = DThorTomP2P.getInstance();
+            DThorTorrent torrent = dht.searchTorrent(new Number160(key));
+            String torrentName = torrent.getSaveAs() + ".torrent";
 
-            try {
-                DThorTomP2P dht = DThorTomP2P.getInstance();
-                DThorTorrent torrent = dht.searchTorrent(new Number160(key));
-                String torrentName = torrent.getSaveAs() + ".torrent";
+            response.setContentType("text/plain");
+            response.setHeader("Content-Disposition", "attachment;filename=\"" + torrentName + "\"");
 
-                response.setContentType("text/plain");
-                response.setHeader("Content-Disposition", "attachment;filename=\"" + torrentName + "\"");
+            byte[] torrentData = TorrentParser.makeTorrent(torrent);
 
-                byte[] torrentData = TorrentParser.makeTorrent(torrent);
+            OutputStream os = response.getOutputStream();
+            os.write(torrentData);
+            os.flush();
+            os.close();
 
-                OutputStream os = response.getOutputStream();
-                os.write(torrentData);
-                os.flush();
-                os.close();
-
-            } catch (Exception ex) {
-                Logger.getLogger(TorrentSearch.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            RequestDispatcher rd = getServletContext().getRequestDispatcher("/search.jsp");
-            rd.forward(request, response);
+        } catch (Exception ex) {
+            Logger.getLogger(TorrentSearch.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -78,18 +72,25 @@ public class TorrentSearch extends HttpServlet {
         connection.disconnect();
 
         String table = "";
-        for(Object array1 : array) {
-            JSONObject a = (JSONObject) array1;
-            table += "<tr><td>";
-            table += "<a class=\"torrent_link\" href=\"?key=" + a.get("key") + "\">";
-            table += "<label class=\"torrent_name\">" + a.get("title") + "</label>";
-            table += "</a></td></tr>";
+        if(!array.isEmpty()) {
+            for(Object array1 : array) {
+                JSONObject a = (JSONObject) array1;
+                table += "<tr><td>";
+                table += "<a class=\"torrent_link\" href=\"?key=" + a.get("key") + "\">";
+                table += "<label class=\"torrent_name\">" + a.get("title") + "</label>";
+                table += "</a></td>";
+                table += "<td><a class=\"torrent_link\" data-toggle=\"modal\" data-target=\"#deleteTorrent\" data-id=\"/" + a.get("key") + "\">";
+                table += "<label class=\"torrent_delete\">Apagar</label></a></td></tr>";
+            }
+
+            request.setAttribute("query", query);
+            request.setAttribute("table", table);
+            RequestDispatcher rd = getServletContext().getRequestDispatcher("/search.jsp");
+            rd.forward(request, response);
+        } else {
+            request.setAttribute("table", table);
+            RequestDispatcher rd = getServletContext().getRequestDispatcher("/index.jsp");
+            rd.forward(request, response);
         }
-
-        request.setAttribute("query", query);
-        request.setAttribute("table", table);
-        RequestDispatcher rd = getServletContext().getRequestDispatcher("/search.jsp");
-        rd.forward(request, response);
-
     }
 }

@@ -2,7 +2,6 @@ package pt.ipb.dthor.torrent;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DThorTorrent implements Serializable {
@@ -20,11 +19,7 @@ public class DThorTorrent implements Serializable {
     private byte[] infoHash;
     private Long totalLength;
     private byte[] pieceHash;
-
-    public DThorTorrent() {
-        announceList = new ArrayList<>();
-        files = new ArrayList<>();
-    }
+    private String deleteKey;
 
     public String getAnnounce() {
         return announce;
@@ -128,5 +123,13 @@ public class DThorTorrent implements Serializable {
 
     public void setPieceHash(byte[] pieceHash) {
         this.pieceHash = pieceHash;
+    }
+
+    public String getDeleteKey() {
+        return deleteKey;
+    }
+
+    public void setDeleteKey(String deleteKey) {
+        this.deleteKey = deleteKey;
     }
 }

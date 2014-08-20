@@ -21,6 +21,7 @@ input[type=text], input[type=submit], textarea {
     font-size: 1em;
     margin-bottom: 1.5em;
     box-sizing: border-box;
+    height: 40px;
 }
 
 input, button, select, textarea {
@@ -37,10 +38,6 @@ ul, ol {
     font-size: 1em;
     line-height: 1.5;
     margin: 0 0 1.5em 0;
-}
-
-a:link, a:visited {
-    color: #F1505A;
 }
 
 a:hover, a:active {
@@ -138,7 +135,7 @@ em {
     background-repeat: repeat;
     background-color: #0b333f;
     border-color: #69F;
-	background-image: none;
+    background-image: none;
 }
 
 .navbar-wrapper {
@@ -239,7 +236,7 @@ input[type=submit]:hover, input[type=submit]:active {
 
 section.single-page {
     padding: 9em 0;
-	padding-bottom: 0;
+    padding-bottom: 0;
 }
 
 section.single-page h1 {
@@ -271,29 +268,30 @@ section#uploadbox .align {
     font-size: 6em;
 }
 
-.btn {
+#uploadbox .btn {
     font-family: 'Patua One', cursive;
     color: #fff;
     width: 185px;
-    height: 20px;
+    height: 18px;
     text-shadow: none;
     font-size: 1.3125em;
     padding: 1em 0.5em;
     letter-spacing: 0.05em;
-    margin: 4.5em auto 0;
     display: block;
     border: 0;
     text-transform: none;
     background: #69F !important;
     border-radius: 3px;
     box-shadow: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
-.btn:link, .btn:visited {
+#uploadbox .btn:link, .btn:visited {
     color: #fff;
 }
 
-.btn:hover {
+#uploadbox .btn:hover {
     background: #312A1E !important;
 }
 
@@ -308,13 +306,11 @@ section#uploadbox .align {
     margin-top: 70px;
     margin-left: 194px;
     margin-bottom: -60px;
-	border-top-right-radius: 0;
-	border-bottom-right-radius: 0;
-	height: 18px;
+    height: 18px;
 }
 
 #uploadbox input[type=submit] {
-	height: 60px;
+    height: 60px;
 }
 
 .btn-file input[type=file] {
@@ -324,27 +320,27 @@ section#uploadbox .align {
     min-height: 100%;
     font-size: 100px;
     text-align: right;
-	opacity: 0;
+    opacity: 0;
     cursor: inherit;
     display: block;
 }
 
-input[readonly] {
+#uploadbox input[readonly] {
     margin-left: 400px;
     margin-bottom: 150px;
-	margin-right: 5px;
+    margin-right: 5px;
     float: left;
     background-color: white !important;
     cursor: text !important;
     width: 40%;
     height: 60px;
-	border-bottom-left-radius: 0;
-	border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
 }
 
 #download_list {
     background: none repeat scroll 0% 0% rgba(255, 255, 255, 0.9);
-	margin-bottom: 50px;
+    margin-bottom: 50px;
     margin-left: auto;
     margin-right: auto;
     width: 900px;
@@ -358,11 +354,11 @@ input[readonly] {
     display: block;
     min-height: 50px;
     margin-top: 0px;
-    margin-left: 4.5%;
+    margin-left: 4%;
     margin-bottom: 20px;
     font-size: 16px;
     padding: 10px;
-    width: 800px;
+    width: 700px;
     line-height: 50px;
     vertical-align: middle;
 }
@@ -383,10 +379,51 @@ label.torrent_name{
     border-radius: 4px;
     padding: 10px;
     text-align: center;
-	font-weight: bold;
+    font-weight: bold;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
 }
 
 label.torrent_name:hover{
     background: none repeat scroll 0% 0% rgba(223, 220, 220, 0.41);
     border-color: #CAC9C9;
+}
+
+.torrent_delete{
+    text-decoration: none;
+    border: 1px solid rgba(179, 169, 169, 0.27);
+    border-radius: 4px;
+    display: block;
+    min-height: 50px;
+    margin-top: 0px;
+    margin-left: -3px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    padding: 10px;
+    width: 100px;
+    line-height: 50px;
+    vertical-align: middle;
+}
+
+label.torrent_delete{
+    display: block;
+    min-height: 50px;
+    background:  none repeat scroll 0% 0% rgba(235, 229, 229, 0.32);
+    border-radius: 4px;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+}
+
+label.torrent_delete:hover{
+    background: none repeat scroll 0% 0% rgba(223, 220, 220, 0.41);
+    border-color: #CAC9C9;
+}
+
+.alert-error {
+    width: 720px;
+    margin: auto;
+    margin-bottom: 10px;
 }

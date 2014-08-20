@@ -7,16 +7,23 @@ import java.util.NavigableMap;
 import java.util.Random;
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.FuturePut;
+import net.tomp2p.dht.FutureRemove;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.futures.FutureBootstrap;
 import net.tomp2p.futures.FutureDiscover;
+import net.tomp2p.nat.FutureNAT;
+import net.tomp2p.nat.FutureRelayNAT;
+import net.tomp2p.nat.PeerBuilderNAT;
+import net.tomp2p.nat.PeerNAT;
 import net.tomp2p.p2p.PeerBuilder;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.peers.Number640;
 import net.tomp2p.peers.PeerAddress;
+import net.tomp2p.relay.FutureRelay;
 import net.tomp2p.rpc.ObjectDataReply;
 import net.tomp2p.storage.Data;
+import org.apache.commons.lang3.RandomStringUtils;
 import pt.ipb.dthor.torrent.DThorTorrent;
 
 public class DThorTomP2P implements IDThor {
@@ -38,6 +45,7 @@ public class DThorTomP2P implements IDThor {
         Random r = new Random();
         if(IS_SUPER_PEER) {
             peer = new PeerBuilderDHT(new PeerBuilder(new Number160(r)).ports(SUPER_PEER_PORT).start()).start();
+            System.out.println("Super Peer started!");
         } else {
             int listenPort = SUPER_PEER_PORT + 1 + (int) Math.floor(Math.random() * 1000);
             peer = new PeerBuilderDHT(new PeerBuilder(new Number160(r)).ports(listenPort).start()).start();
@@ -46,30 +54,59 @@ public class DThorTomP2P implements IDThor {
             FutureDiscover discovery = peer.peer().discover().peerAddress(peerAddress).start();
             discovery.awaitUninterruptibly();
 
-            if(discovery.isFailed()) {
-                //Executar NAT
-            }
+            if(discovery.isSuccess()) {
+                peerAddress = discovery.peerAddress();
 
-            peerAddress = discovery.peerAddress();
+                FutureBootstrap bootstrap = peer.peer().bootstrap().peerAddress(peerAddress).start();
+                bootstrap.awaitUninterruptibly();
 
-            FutureBootstrap bootstrap = peer.peer().bootstrap().peerAddress(peerAddress).start();
-            bootstrap.awaitUninterruptibly();
+                if(bootstrap.isSuccess()) {
+                    System.out.println("Peer Connected!");
+                } else {
+                    throw new Exception("Failed to bootstrap to host " + bootstrap.failedReason());
 
-            if(bootstrap.isFailed()) {
-                throw new Exception("Failed to bootstrap to host " + bootstrap.failedReason());
+                }
+            } else {
+                PeerNAT peerNAT = new PeerBuilderNAT(peer.peer()).start();
+                FutureNAT futureNAT = peerNAT.startSetupPortforwarding(discovery);
+                FutureRelayNAT frn = peerNAT.startRelay(discovery, futureNAT);
+
+                if(frn.isFailed()) {
+                    PeerAddress serverPeerAddress = peer.peerBean().serverPeerAddress();
+                    serverPeerAddress = serverPeerAddress.changeFirewalledTCP(true).changeFirewalledUDP(true);
+                    peer.peerBean().serverPeerAddress(serverPeerAddress);
+
+                    FutureBootstrap fb = peer.peer().bootstrap().peerAddress(peerAddress).start();
+                    fb.awaitUninterruptibly();
+
+                    if(fb.isSuccess()) {
+                        FutureRelay futureRelay = new FutureRelay();
+                        futureRelay.awaitUninterruptibly();
+
+                        if(futureRelay.isSuccess()) {
+                            FutureBootstrap fb2 = peer.peer().bootstrap().peerAddress(peerAddress).start();
+                            fb2.awaitUninterruptibly();
+
+                            System.out.println("PeerNAT Connected!");
+                        }
+                    }
+                }
             }
         }
-
-        System.out.println("Peer Connected!");
     }
 
     @Override
-    public void addTorrent(DThorTorrent torrent) throws IOException {
+    public String addTorrent(DThorTorrent torrent) throws IOException {
         Data torrentData = new Data(torrent);
         Number160 key = torrentData.hash();
 
+        String deleteKey = RandomStringUtils.randomAlphanumeric(16);
+        torrent.setDeleteKey(deleteKey);
+
         FuturePut fp = peer.put(key).object(torrent).start();
         fp.awaitUninterruptibly();
+
+        return deleteKey;
     }
 
     @Override
@@ -102,4 +139,19 @@ public class DThorTomP2P implements IDThor {
             }
         });
     }
+
+    @Override
+    public boolean deleteTorrent(Number160 key, String deleteKey) throws ClassNotFoundException, IOException {
+        boolean result = false;
+        DThorTorrent torrent = searchTorrent(key);
+
+        if(torrent.getDeleteKey().equalsIgnoreCase(deleteKey)) {
+            FutureRemove fr = peer.remove(key).start();
+            fr.awaitUninterruptibly();
+            result = true;
+        }
+
+        return result;
+    }
+
 }

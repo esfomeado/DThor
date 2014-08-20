@@ -43,9 +43,9 @@ public class TorrentUpload extends HttpServlet {
                 DThorTorrent torrent = TorrentParser.parseTorrent(Files.readAllBytes(path));
 
                 DThorTomP2P dht = DThorTomP2P.getInstance();
-                dht.addTorrent(torrent);
+                String deleteKey = dht.addTorrent(torrent);
 
-                request.setAttribute("message", "Upload Sucedded!");
+                request.setAttribute("message", "Upload Sucedded!<br>Deletion Key: " + deleteKey);
                 RequestDispatcher rd = getServletContext().getRequestDispatcher("/index.jsp");
                 rd.forward(request, response);
 

@@ -36,8 +36,15 @@
                 <div class="container">
                     <div class="row">
                         <div class="span12">
+                            <% if(request.getAttribute("table") != null) {
+                            %>
+                            <div class="alert alert-error">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                No results found!
+                            </div>
+                            <% } %>
                             <form action="search" method="post">
-                                <input type="text" name="query" placeholder="Search Query" class="cform-text" size="40" title="Search Query">
+                                <input type="text" name="query" placeholder="Search Query" class="cform-text" size="40" pattern="[a-zA-Z0-9]*">
                                 <input type="submit" value="Search" class="cform-submit">
                             </form>
                         </div>
@@ -52,8 +59,8 @@
                 <% String result = (String) request.getAttribute("message");
                     if(result != null) {
                 %>
-                <div class="alert alert-info">
-                     <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <div id="result" class="alert alert-info">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
                     <% out.println(result); %>
                 </div>
                 <% } %>
@@ -64,7 +71,7 @@
                         <div class="input-group">
                             <span class="input-group-btn">
                                 <span class="btn btn-primary btn-file">
-                                    Browse&hellip; <input type="file" name="torrent">
+                                    Browse&hellip; <input type="file" name="torrent" accept="application/x-bittorrent">
                                 </span>
                             </span>
                             <input type="text" class="form-control" readonly>

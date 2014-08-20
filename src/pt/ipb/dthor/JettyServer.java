@@ -14,6 +14,7 @@ import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
+import pt.ipb.dthor.servlets.TorrentDelete;
 import pt.ipb.dthor.servlets.TorrentSearch;
 import pt.ipb.dthor.servlets.TorrentUpload;
 
@@ -25,7 +26,7 @@ public class JettyServer {
     private final Server server;
 
     public static JettyServer getInstance() throws Exception {
-        if (instance == null) {
+        if(instance == null) {
             instance = new JettyServer();
         }
         return instance;
@@ -36,15 +37,15 @@ public class JettyServer {
 
         URL webRootURL = this.getClass().getResource(WEB_ROOT);
 
-        if (webRootURL == null) {
+        if(webRootURL == null) {
             throw new FileNotFoundException("Unable to find " + WEB_ROOT);
         }
-        
+
         File tempDir = new File(System.getProperty("java.io.tmpdir"));
         File writeDir = new File(tempDir.toString(), "dthor");
 
-        if (!writeDir.exists()) {
-            if (!writeDir.mkdirs()) {
+        if(!writeDir.exists()) {
+            if(!writeDir.mkdirs()) {
                 throw new IOException("Unable to create directory: " + writeDir);
             }
         }
@@ -55,9 +56,10 @@ public class JettyServer {
         context.setContextPath("/");
         context.setAttribute("javax.servlet.context.tempdir", writeDir);
         context.setResourceBase(webRootURL.toURI().toASCIIString());
-        
+
         context.addServlet(TorrentUpload.class, "/upload");
         context.addServlet(TorrentSearch.class, "/search");
+        context.addServlet(TorrentDelete.class, "/delete");
 
         server.setHandler(context);
 
@@ -82,7 +84,7 @@ public class JettyServer {
         jspServlet.setInitParameter("compilerSourceVM", "1.7");
         jspServlet.setInitParameter("keepgenerated", "true");
         context.addServlet(jspServlet, "*.jsp");
-        
+
         server.start();
     }
 
