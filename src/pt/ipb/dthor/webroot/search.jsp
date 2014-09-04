@@ -23,7 +23,7 @@
                         <h1 class="brand"><a href="index.jsp">DThor!</a></h1>
                         <nav class="pull-right nav-collapse collapse">
                             <ul id="menu-main" class="nav">
-                                <li><a title="uploadbox" href="index.html#uploadbox">Upload Torrent</a>
+                                <li><a title="uploadbox" href="index.jsp#uploadbox">Upload Torrent</a>
                                 </li>
                             </ul>
                         </nav>
@@ -38,7 +38,7 @@
                 <span id="fileId" hidden="true"></span>
             </div>
             <div class="modal-body">
-                <div class="alert alert-warning" role="alert">Warning this is action is irrevarsily!</div>
+                <div class="alert alert-warning" role="alert">Warning this is action is irreversible!</div>
                 <form action="search" method="post">
                     <h5>Deletion Key:</h5>
                     <input type="text" name="deleteKey" id="deleteKey" size="16">
