@@ -17,7 +17,7 @@ public class DThorConfig {
     public static String SEARCH_IP;
     public static String SEARCH_PORT;
 
-    public void load() throws FileNotFoundException, IOException, URISyntaxException {
+    public void load() throws IOException, URISyntaxException {
         URL configURL = getClass().getResource("./config.properties");
 
         Properties config = new Properties();

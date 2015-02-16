@@ -21,7 +21,7 @@ import com.dthor.servlets.TorrentUpload;
 public class JettyServer {
 
     private final int SERVER_PORT = DThorConfig.JETTY_PORT;
-    private final String WEB_ROOT = "./webroot/";
+    private final static String WEB_ROOT = "./webroot/";
     private static JettyServer instance = null;
     private final Server server;
 

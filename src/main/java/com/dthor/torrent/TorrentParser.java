@@ -10,12 +10,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+
 import org.apache.commons.codec.digest.DigestUtils;
 
 public class TorrentParser {
@@ -119,7 +115,7 @@ public class TorrentParser {
         return torrent;
     }
 
-    public static byte[] makeTorrent(DThorTorrent t) throws UnsupportedEncodingException, IOException {
+    public static byte[] makeTorrent(DThorTorrent t) throws IOException {
         Map<String, BEValue> torrent = new HashMap<>();
 
         torrent.put("announce", new BEValue(t.getAnnounce()));

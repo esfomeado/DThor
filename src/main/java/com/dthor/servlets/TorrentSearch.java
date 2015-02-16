@@ -71,16 +71,16 @@ public class TorrentSearch extends HttpServlet {
         result.close();
         connection.disconnect();
 
-        String table = "";
+        StringBuilder table = new StringBuilder();
         if(!array.isEmpty()) {
-            for(Object array1 : array) {
-                JSONObject a = (JSONObject) array1;
-                table += "<tr><td>";
-                table += "<a class=\"torrent_link\" href=\"?key=" + a.get("key") + "\">";
-                table += "<label class=\"torrent_name\">" + a.get("title") + "</label>";
-                table += "</a></td>";
-                table += "<td><a class=\"torrent_link\" data-toggle=\"modal\" data-target=\"#deleteTorrent\" data-id=\"/" + a.get("key") + "\">";
-                table += "<label class=\"torrent_delete\">Apagar</label></a></td></tr>";
+            for(Object torrent : array) {
+                JSONObject a = (JSONObject) torrent;
+                table.append("<tr><td>");
+                table.append("<a class=\"torrent_link\" href=\"?key=" + a.get("key") + "\">");
+                table.append("<label class=\"torrent_name\">" + a.get("title") + "</label>");
+                table.append("</a></td>");
+                table.append("<td><a class=\"torrent_link\" data-toggle=\"modal\" data-target=\"#deleteTorrent\" data-id=\"/" + a.get("key") + "\">");
+                table.append("<label class=\"torrent_delete\">Apagar</label></a></td></tr>");
             }
 
             request.setAttribute("query", query);
@@ -88,7 +88,7 @@ public class TorrentSearch extends HttpServlet {
             RequestDispatcher rd = getServletContext().getRequestDispatcher("/search.jsp");
             rd.forward(request, response);
         } else {
-            request.setAttribute("table", table);
+            request.setAttribute("table", table.toString());
             RequestDispatcher rd = getServletContext().getRequestDispatcher("/index.jsp");
             rd.forward(request, response);
         }
