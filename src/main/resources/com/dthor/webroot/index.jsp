@@ -44,7 +44,7 @@
                             </div>
                             <% } %>
                             <form action="search" method="post">
-                                <input type="text" name="query" placeholder="Search Query" class="cform-text" size="40" pattern="[a-zA-Z0-9]*">
+                                <input type="text" name="query" placeholder="Search Query" class="cform-text" size="40" pattern="[a-zA-Z0-9 ]*">
                                 <input type="submit" value="Search" class="cform-submit">
                             </form>
                         </div>
