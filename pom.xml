@@ -17,7 +17,7 @@
 
     <properties>
         <TomP2PVersion>5.0-Beta3</TomP2PVersion>
-        <JettyVersion>9.2.7.v20150116</JettyVersion>
+        <JettyVersion>9.3.24.v20180605</JettyVersion>
     </properties>
 
     <dependencies>
